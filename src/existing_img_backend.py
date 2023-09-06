@@ -68,13 +68,16 @@ class ExistingImage:
 
     @staticmethod
     def __decode(image: np.ndarray, key: str, n_bits: int = 1) -> str:
+        len_key = len(key)
+
         def __get_binary_from_img(image, key, n_bits):
             binary_data = ""
             for row in image:
                 for pxl in row:
                     for clr in pxl:
                         binary_data += f"{(clr & n_bits):b}"
-                        if key in binary_data:
+                        # if key in binary_data:
+                        if key == binary_data[-len_key:]:
                             binary_data = binary_data.replace(key, "")
                             return binary_data
             print("invalid image")
