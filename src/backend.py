@@ -4,44 +4,54 @@ from random import choices
 
 from PIL import Image, ImageDraw
 
-PRINTABLE = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\t'
+PRINTABLE = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~\t"
 
 
 class Palette:
     """Pallete object to map chars to colours"""
 
+    palette = {" ": (0, 0, 0, 0), (0, 0, 0, 0): " "}
+
     def __init__(self, key: str = None):
         """Maps all characters to colours using the key"""
-        self.palette = {' ': (0, 0, 0, 0)}
-        self.rgbtocol = {(0, 0, 0, 0): ' '}
 
         if not key:
-            key = ''.join(choices(PRINTABLE, k=16))
-        self.keylen = len(key) * 8
+            key = "".join(choices(PRINTABLE, k=16))
+        if not (3 < len(key) < 25):
+            raise ValueError("key should be between 4 and 24 characters")
+
+        # self.keylen = len(key) * 8
         self.key = self._generate_key(key)
+        # print(self.key)
 
         for n, char in enumerate(PRINTABLE):  # generate pallete
-            val = (self.key * (n ** self.keylen)) % (255*255*255*64)
-            r, g, b, a = (val & 255), (val >> 8) & 255, (val >> 16) & 255, (val >> 20) & 63
-            color = (r, g, b, 255-a)
+            val = self.key + n**n  # * (n**self.keylen)  # % (255 * 255 * 255 * 64)
+            # print(val)
+            r, g, b, a = (
+                (val & 255),
+                (val >> 8) & 255,
+                (val >> 16) & 255,
+                (val >> 20) & 63,
+            )
+            # print(r, g, b, a)
+            color = (r, g, b, 255 - a)
             self.palette[char] = color
-            self.rgbtocol[color] = char
+            self.palette[color] = char
 
     def _generate_key(self, key):
         """Generates a int key from the string"""
         if not key:
             raise ValueError("String for encryption cannot be empty")
-        return int.from_bytes(key.encode(), 'little')
+        return int.from_bytes(key.encode(), "little")
 
     def __getitem__(self, item):
         """Returns the color from char/char from color"""
-        if item in self.palette:  # char to colour
-            return self.palette[item]
-        if item in self.rgbtocol:  # colour to char
-            return self.rgbtocol[item]
-        if isinstance(item, str):  # unknown char (like emoji)
-            return self.palette['?']
-        raise KeyError  # invalid decryption
+        if type(item) not in (
+            str,
+            tuple,  # will not work if the color is specified as ndarray
+        ):
+            raise KeyError  # invalid decryption
+        return self.palette.get(item, "?")
 
 
 class TypingColors:
@@ -76,43 +86,66 @@ class TypingColors:
     def update(self, new_text):
         """Makes changes to the image from the new text"""
         # deal with newlines - simply turn them to spaces
-        text = ''.join([
-            i + (' ' * (self.width - len(i) % self.width)) for i in new_text.split('\n')
-        ]).rstrip()
+        text = "".join(
+            [
+                i + (" " * (self.width - len(i) % self.width))
+                for i in new_text.split("\n")
+            ]
+        ).rstrip()
         textlen = len(text)
 
         # check if text too big
-        if textlen/self.width > self.height:
+        if textlen / self.width > self.height:
             # expand till fit
-            while textlen/self.width > self.height:
+            while textlen / self.width > self.height:
                 self.width += self.ar_width
                 self.height += self.ar_height
                 self.size = (self.width, self.height)
-                textlen = sum([max(len(i), self.width) for i in new_text.split('\n')])
+                textlen = sum([max(len(i), self.width) for i in new_text.split("\n")])
             # redraw the canvas
             self.canvas = Image.new("RGBA", self.size)
             self.canvas_drawer = ImageDraw.Draw(self.canvas)
-            self.text = ''
-            text = ''.join([
-                i + (' ' * (self.width - len(i) % self.width)) for i in new_text.split('\n')
-            ]).rstrip()
+            self.text = ""
+            text = "".join(
+                [
+                    i + (" " * (self.width - len(i) % self.width))
+                    for i in new_text.split("\n")
+                ]
+            ).rstrip()
 
         # check if text too small
-        textlen = sum([max(len(i), self.width-self.ar_width) for i in new_text.split('\n')])
-        if self.height > self.ar_height and (textlen/(self.width-self.ar_width)) < self.height-self.ar_height:
+        textlen = sum(
+            [max(len(i), self.width - self.ar_width) for i in new_text.split("\n")]
+        )
+        if (
+            self.height > self.ar_height
+            and (textlen / (self.width - self.ar_width)) < self.height - self.ar_height
+        ):
             # shrink till fit
-            while self.height > self.ar_height and (textlen/(self.width-self.ar_width)) < self.height-self.ar_height:
+            while (
+                self.height > self.ar_height
+                and (textlen / (self.width - self.ar_width))
+                < self.height - self.ar_height
+            ):
                 self.width -= self.ar_width
                 self.height -= self.ar_height
                 self.size = (self.width, self.height)
-                textlen = sum([max(len(i), self.width-self.ar_width) for i in new_text.split('\n')])
+                textlen = sum(
+                    [
+                        max(len(i), self.width - self.ar_width)
+                        for i in new_text.split("\n")
+                    ]
+                )
             # redraw the canvas
             self.canvas = Image.new("RGBA", self.size)
             self.canvas_drawer = ImageDraw.Draw(self.canvas)
-            self.text = ''
-            text = ''.join([
-                i + (' ' * (self.width - len(i) % self.width)) for i in new_text.split('\n')
-            ]).rstrip()
+            self.text = ""
+            text = "".join(
+                [
+                    i + (" " * (self.width - len(i) % self.width))
+                    for i in new_text.split("\n")
+                ]
+            ).rstrip()
 
         # stores pixels to be updated, process deletions first
         insertions = {}
@@ -124,10 +157,10 @@ class TypingColors:
             original_char = self.text[pos] if pos < len(self.text) else None
             coords = self._idx2coord(pos)
 
-            if operation == '-':  # remove char (make it transparent again)
+            if operation == "-":  # remove char (make it transparent again)
                 deletions += coords
                 pos -= 1  # shift the rest of the pixels left
-            elif operation == '+':  # add char
+            elif operation == "+":  # add char
                 insertions.setdefault(char, [])
                 insertions[char] += coords
             elif original_pos != pos or original_char != char:
@@ -157,5 +190,5 @@ class TypingColors:
         """Returns scaled PNG bytes of image for GUI"""
         bio = BytesIO()
         size = (self.ar_width * scale_factor, self.ar_height * scale_factor)
-        self.canvas.resize(size, Image.BOX).save(bio, format='PNG')
+        self.canvas.resize(size, Image.BOX).save(bio, format="PNG")
         return bio.getvalue()

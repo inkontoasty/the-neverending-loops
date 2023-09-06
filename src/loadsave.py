@@ -1,6 +1,7 @@
 from PIL import Image
 
 from backend import TypingColors
+import numpy as np
 
 
 def load(file_path, key):
@@ -10,19 +11,21 @@ def load(file_path, key):
     Takes in a file path to the image and the decryption key
     returns TypingColors object if key and image works, raises KeyError otherwise
     """
-    img = Image.open(file_path)
+    img = Image.open(file_path).convert("RGBA")
     w, h = img.size
-    object = TypingColors(img.convert("RGBA"))
+    object = TypingColors(img)
     object.set_encryption(key)  # load the key
-    decoded_text = "".join([
-        object.palette[(r, g, b, a)]
-        for r, g, b, a in img.getdata()
-    ]).rstrip()  # get the text
+    decoded_text = "".join(
+        [object.palette[(r, g, b, a)] for r, g, b, a in np.asarray(img)]
+    ).rstrip()  # get the text
     # split into rows and turning spaces to newlines
-    decoded_chunks = [decoded_text[i:i+w]
-                      for i in range(0, len(decoded_text), w)]
-    decoded_text = ''.join([(line.rstrip()+'\n') if line.endswith(' ') else line
-                            for line in decoded_chunks])
+    decoded_chunks = [decoded_text[i : i + w] for i in range(0, len(decoded_text), w)]
+    decoded_text = "".join(
+        [
+            (line.rstrip() + "\n") if line.endswith(" ") else line
+            for line in decoded_chunks
+        ]
+    )
     object.update(decoded_text)
     return object, decoded_text  # return the text for the gui
 
