@@ -1,12 +1,14 @@
+from pathlib import Path
+
 import numpy as np
 from PIL import Image
-from pathlib import Path
 
 
 class ExistingImage:
     """
     Encodes(Decodes) text into(from) an existing image without noticeably altering the image.
-    Requires a (symmetric) key to encode/decode the text.
+
+        Requires a (symmetric) key to encode/decode the text.
     """
 
     def __init__(
@@ -52,6 +54,7 @@ class ExistingImage:
         return image
 
     def encode(self):
+        """Encode the given secret into the img"""
         # print("[*] Encoding data...")
         secret_data = self.text + self.key
 
@@ -93,6 +96,7 @@ class ExistingImage:
         return decoded_data
 
     def decode(self):
+        """Decode the given img to reveeal the secret text"""
         # print("[+] Decoding...")
 
         n_bits = self.input_image[-1][-1][-1] & 7

@@ -1,9 +1,11 @@
 import tkinter as tk  # noqa: F401
+from tkinter import Button, Frame, Label, Menu, PhotoImage, Tk  # noqa: F401
+
+from PIL import Image, ImageTk  # noqa: F401
+
 import backend as backend  # noqa: F401
 import loadsave  # noqa: F401
 from menu import new_file, open_file, save_file, save_file_as  # noqa: F401
-from PIL import Image, ImageTk  # noqa: F401
-from tkinter import PhotoImage, Frame, Button, Label, Menu, Tk  # noqa: F401
 from modules import ImageLabel  # noqa: F401
 
 WIN_W, WIN_H = (800, 600)
@@ -58,30 +60,53 @@ class GUI:
             loading = ImageLabel(root)
             loading.configure(bd=0, highlightbackground=None)
             loading.place(relx=0.5, rely=0.55, anchor="center")
-            loading.load("assets\\imgs\\loading.gif", False, lambda: self.create_main_window([loading, gif]))
+            loading.load(
+                "assets\\imgs\\loading.gif",
+                False,
+                lambda: self.create_main_window([loading, gif]),
+            )
+
         gif.load("assets\\imgs\\title.gif", False, lambda: loading_animation(self.root))
         self.root.configure(background=DARK_GRAY)
         self.root.mainloop()
 
     def create_main_window(self, destroy: list[ImageLabel]):
         """Creates The Main Window Page for the application"""
-        if len(destroy) > 0:  # Destroy the previous image labels for a fresh home screen application.
+        if (
+            len(destroy) > 0
+        ):  # Destroy the previous image labels for a fresh home screen application.
             for i in destroy:
                 i.destroy()
 
-        file_layout = {'New': {'command': '', 'image': 'assets\\menubar\\demo.png',
-                               'accelerator': 'Ctrl+N'},
-                       'Open': {'command': '', 'image': 'assets\\menubar\\demo.png',
-                                'accelerator': 'Ctrl+O'},
-                       'Save': {'command': '', 'image': 'assets\\menubar\\demo.png',
-                                'accelerator': 'Ctrl+S'},
-                       'Save As': {'command': '', 'image': 'assets\\menubar\\demo.png',
-                                   'accelerator': 'Ctrl+Shift+S'},
-                       '---': '',
-                       'Exit': {'command': self.root.destroy, 'image': 'assets\\menubar\\demo.png',
-                                'accelerator': 'Alt+F4'}
-                       }
-        config_layout = ['Set Key']
+        file_layout = {
+            "New": {
+                "command": "",
+                "image": "assets\\menubar\\demo.png",
+                "accelerator": "Ctrl+N",
+            },
+            "Open": {
+                "command": "",
+                "image": "assets\\menubar\\demo.png",
+                "accelerator": "Ctrl+O",
+            },
+            "Save": {
+                "command": "",
+                "image": "assets\\menubar\\demo.png",
+                "accelerator": "Ctrl+S",
+            },
+            "Save As": {
+                "command": "",
+                "image": "assets\\menubar\\demo.png",
+                "accelerator": "Ctrl+Shift+S",
+            },
+            "---": "",
+            "Exit": {
+                "command": self.root.destroy,
+                "image": "assets\\menubar\\demo.png",
+                "accelerator": "Alt+F4",
+            },
+        }
+        config_layout = ["Set Key"]
 
         # Main Menu Bar
         menubar = Menu(self.root, tearoff=0, font=("Consolas", 12))
@@ -93,16 +118,17 @@ class GUI:
             if name == "---":
                 fileMenu.add_separator()
             else:
-                img = Image.open(data['image'])
+                img = Image.open(data["image"])
                 icon = ImageTk.PhotoImage(img)
-                fileMenu.add_command(label=name,
-                                     command=data['command'],
-                                     accelerator=data['accelerator'],
-                                     image=icon,
-                                     compound="left",
-                                     activeforeground=WHITE,
-                                     activebackground=AQUA,
-                                     )
+                fileMenu.add_command(
+                    label=name,
+                    command=data["command"],
+                    accelerator=data["accelerator"],
+                    image=icon,
+                    compound="left",
+                    activeforeground=WHITE,
+                    activebackground=AQUA,
+                )
 
         configMenu = Menu(self.root, tearoff=0)
         menubar.add_cascade(label="Config", menu=configMenu)
@@ -110,6 +136,7 @@ class GUI:
             configMenu.add_command(label=item)
         self.root.configure(background=DARK_GRAY, menu=menubar)
         self.root.mainloop()
+
 
 # Testing
 

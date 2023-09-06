@@ -1,7 +1,7 @@
+import numpy as np
 from PIL import Image
 
 from backend import TypingColors
-import numpy as np
 
 
 def load(file_path, key):

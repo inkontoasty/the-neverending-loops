@@ -1,6 +1,7 @@
 import tkinter as tk
-from PIL import Image, ImageTk
 from itertools import count, cycle
+
+from PIL import Image, ImageTk
 
 
 class ImageLabel(tk.Label):
@@ -23,9 +24,11 @@ class ImageLabel(tk.Label):
                 im.seek(i)
         except EOFError:
             pass
-        self.frames = cycle(self.og_frames) if repeat else iter(self.og_frames)  # If img needs to be cycled
+        self.frames = (
+            cycle(self.og_frames) if repeat else iter(self.og_frames)
+        )  # If img needs to be cycled
         try:
-            self.delay = im.info['duration']
+            self.delay = im.info["duration"]
         except Exception:
             self.delay = 100
         if len(self.og_frames) == 1:  # If image is not a gif

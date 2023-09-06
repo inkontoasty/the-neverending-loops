@@ -36,7 +36,11 @@ class Gui:
         # TODO: What to do when the user changes the key when we already has some output on the left
         # coz the previously set color pixels wont change rn
         """Asks For encryption key from the user"""
-        key = sg.popup_get_text('Enter encryption key', title="Enter Key", default_text=self.typingColors.key)
+        key = sg.popup_get_text(
+            "Enter encryption key",
+            title="Enter Key",
+            default_text=self.typingColors.key,
+        )
         # Dont change the already set key if the user selects `cancel` in input
         if key is None:
             key = self.typingColors.key
@@ -47,23 +51,25 @@ class Gui:
     def create_main_window(self):
         """Creates Window for the application"""
         menu_layout = [
-            ['File', ['New', 'Open', 'Save', 'Save As', '---', 'Exit']],
-            ['Config', ['Set Key']],
-            ['Options', ['Import Image', 'Export Image']]
+            ["File", ["New", "Open", "Save", "Save As", "---", "Exit"]],
+            ["Config", ["Set Key"]],
+            ["Options", ["Import Image", "Export Image"]],
         ]
 
         left_side = [
             [sg.Sizer(WIN_W / 2, 0)],
-            [sg.Text('> New file <', font=('Consolas', 10), key='KEY-FILENAME')],
-            [sg.Multiline(
-                key="KEY-USER-INPUT",
-                enable_events=True,
-                size=(15, WIN_H // 25),
-                font=('Consolas', 16),
-                rstrip=False,
-                expand_x=True,
-                expand_y=True
-            )]
+            [sg.Text("> New file <", font=("Consolas", 10), key="KEY-FILENAME")],
+            [
+                sg.Multiline(
+                    key="KEY-USER-INPUT",
+                    enable_events=True,
+                    size=(15, WIN_H // 25),
+                    font=("Consolas", 16),
+                    rstrip=False,
+                    expand_x=True,
+                    expand_y=True,
+                )
+            ],
         ]
 
         right_side = [
@@ -77,67 +83,89 @@ class Gui:
         layout = [
             [sg.Menu(menu_layout)],
             [
-                sg.Column(left_side, element_justification='center', size=(WIN_W // 2, WIN_H)),
+                sg.Column(
+                    left_side, element_justification="center", size=(WIN_W // 2, WIN_H)
+                ),
                 sg.VSeperator(),
-                sg.Column(right_side, element_justification='center', size=(WIN_W // 2, WIN_H))
+                sg.Column(
+                    right_side, element_justification="center", size=(WIN_W // 2, WIN_H)
+                ),
             ],
             # [
             #     sg.Column(transition_page, element_justification='center', size=(WIN_W // 2, WIN_H))
             # ],
             # TODO Show word count and size of image here...
-            [sg.StatusBar("Hello World !")]
+            [sg.StatusBar("Hello World !")],
         ]
 
-        return sg.Window('Pixel Studio',
-                         layout,
-                         resizable=True,
-                         finalize=True,
-                         size=(WIN_W, WIN_H),
-                         return_keyboard_events=True)
+        return sg.Window(
+            "Pixel Studio",
+            layout,
+            resizable=True,
+            finalize=True,
+            size=(WIN_W, WIN_H),
+            return_keyboard_events=True,
+        )
 
     def create_decrypt_encrypt_window(self):
         """Function to create a window to input encryption key"""
-        menu_layout = [
-            ['File', ['New', 'Open', 'Save', 'Save As', '---', 'Exit']]
-        ]
+        menu_layout = [["File", ["New", "Open", "Save", "Save As", "---", "Exit"]]]
 
         encryption_button = [
             [sg.Sizer(POP_W / 2, 0)],
-            [sg.Button('Encrypt', key='KEY-ENCRYPT-BUTTON')]
+            [sg.Button("Encrypt", key="KEY-ENCRYPT-BUTTON")],
         ]
         decryption_button = [
             [sg.Sizer(POP_W / 2, 0)],
-            [sg.Button('Decrypt', key='KEY-DECRYPT-BUTTON')]
+            [sg.Button("Decrypt", key="KEY-DECRYPT-BUTTON")],
         ]
 
         encryption_decryption = [
             [sg.Sizer(POP_W, 0)],
-            [sg.Text('Encryption Key', font=('Consolas', 10))],
-            [sg.InputText(
-                key="KEY-ENCRYPTION-INPUT",
-                enable_events=True,
-                size=(15, POP_H // 25),
-                font=('Consolas', 16),
-                expand_x=True,
-                expand_y=True
-            )]
+            [sg.Text("Encryption Key", font=("Consolas", 10))],
+            [
+                sg.InputText(
+                    key="KEY-ENCRYPTION-INPUT",
+                    enable_events=True,
+                    size=(15, POP_H // 25),
+                    font=("Consolas", 16),
+                    expand_x=True,
+                    expand_y=True,
+                )
+            ],
         ]
 
         layout2 = [
             [sg.Menu(menu_layout)],
-            [sg.Column(encryption_decryption, element_justification='center', size=(POP_W, POP_H // 3))],
             [
-                sg.Column(encryption_button, element_justification='center', size=(POP_W // 2, POP_H // 3)),
-                sg.Column(decryption_button, element_justification='center', size=(POP_W // 2, POP_H // 3))
+                sg.Column(
+                    encryption_decryption,
+                    element_justification="center",
+                    size=(POP_W, POP_H // 3),
+                )
+            ],
+            [
+                sg.Column(
+                    encryption_button,
+                    element_justification="center",
+                    size=(POP_W // 2, POP_H // 3),
+                ),
+                sg.Column(
+                    decryption_button,
+                    element_justification="center",
+                    size=(POP_W // 2, POP_H // 3),
+                ),
             ],
         ]
 
-        return sg.Window('Pixel Studio2',
-                         layout2,
-                         resizable=True,
-                         finalize=True,
-                         size=(POP_W, POP_H),
-                         return_keyboard_events=True)
+        return sg.Window(
+            "Pixel Studio2",
+            layout2,
+            resizable=True,
+            finalize=True,
+            size=(POP_W, POP_H),
+            return_keyboard_events=True,
+        )
 
     def update_img(self, value):
         """Updates Generated Image
@@ -170,12 +198,15 @@ class Gui:
         """Main loop to process events"""
         while True:
             event, values = self.main_window(timeout=100)
-            if event in (sg.WIN_CLOSED, 'Exit'):  # if user closes window or clicks cancel
+            if event in (
+                sg.WIN_CLOSED,
+                "Exit",
+            ):  # if user closes window or clicks cancel
                 break
 
-            user_input = values['KEY-USER-INPUT']
+            user_input = values["KEY-USER-INPUT"]
 
-            if event == '__TIMEOUT__':
+            if event == "__TIMEOUT__":
                 if self.UPDATE_FLAG:
                     self.UPDATE_FLAG = False
                     self.update_img(user_input)
@@ -198,31 +229,35 @@ class Gui:
             # '$letter:$code' are used to implement `ctrl + $letter` shortcuts
 
             # 'File' submenu events
-            if event in ('New', 'n:78'):
+            if event in ("New", "n:78"):
                 self.file = None
                 new_file(self.main_window)
                 self.UPDATE_FLAG = True
-            elif event in ('Open', 'o:79'):
+            elif event in ("Open", "o:79"):
                 self.file = open_file(self.main_window)
                 self.UPDATE_FLAG = True
-            elif event in ('Save', 's:83'):
+            elif event in ("Save", "s:83"):
                 save_file(self.main_window, self.file, user_input)
-            elif event == 'Save As':
+            elif event == "Save As":
                 self.file = save_file_as(self.main_window, user_input)
 
             # 'Config' submenu events==
-            elif event == 'Set Key':
+            elif event == "Set Key":
                 self.ask_key()
 
-            elif event == 'Import Image':
+            elif event == "Import Image":
                 # load png in backend
-                filename = sg.popup_get_file('Open', no_window=True, keep_on_top=True)
-                self.typingColors, decoded_text = loadsave.load(filename, self.typingColors.key)
+                filename = sg.popup_get_file("Open", no_window=True, keep_on_top=True)
+                self.typingColors, decoded_text = loadsave.load(
+                    filename, self.typingColors.key
+                )
                 # load text and image in gui
-                self.main_window['KEY-USER-INPUT'].update(value=decoded_text)
+                self.main_window["KEY-USER-INPUT"].update(value=decoded_text)
                 self.update_img(decoded_text)
-            elif event == 'Export Image':
-                filename = sg.popup_get_file('Save As', save_as=True, no_window=True, default_extension='png')
+            elif event == "Export Image":
+                filename = sg.popup_get_file(
+                    "Save As", save_as=True, no_window=True, default_extension="png"
+                )
                 loadsave.save(self.typingColors, filename)
 
         self.main_window.close()

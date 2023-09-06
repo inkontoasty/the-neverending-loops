@@ -14,7 +14,6 @@ class Palette:
 
     def __init__(self, key: str = None):
         """Maps all characters to colours using the key"""
-
         if not key:
             key = "".join(choices(PRINTABLE, k=16))
         if not (3 < len(key) < 25):
