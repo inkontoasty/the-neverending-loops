@@ -16,7 +16,7 @@ def load(file_path, key):
     object = TypingColors(img)
     object.set_encryption(key)  # load the key
     decoded_text = "".join(
-        [object.palette[(r, g, b, a)] for r, g, b, a in np.asarray(img)]
+        [object.palette[(r, g, b, a)] for r, g, b, a in np.array(img)[0]]
     ).rstrip()  # get the text
     # split into rows and turning spaces to newlines
     decoded_chunks = [decoded_text[i : i + w] for i in range(0, len(decoded_text), w)]
