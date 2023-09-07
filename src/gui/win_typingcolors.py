@@ -1,5 +1,7 @@
 from tkinter import *
 from tkinter import filedialog as fd
+from backend.typingcolors import TypingColors
+# from gui.main_gui import GUI
 
 DARK_GRAY, GRAY = "#222831", "#393E46"
 AQUA, WHITE = "#00ADB5", "#EEEEEE"
@@ -7,14 +9,14 @@ RED, GREEN = "#cd0000", "#1BAA4A"
 BRIGHT_RED = "#ff0000"
 
 
-class TypingColorsWin(Toplevel):
+class TypingColorsWin(object):
     """Window for typingcolors"""
 
-    def __init__(self, typingColors):
+    def __init__(self):
         """Creates the layout"""
         super().__init__()
         self.create_menu_bar()
-        self.typingColors = typingColors  # the main backend
+        self.typingColors = TypingColors()  # the main backend
         self.file = None  # open files
         self.title("New File - Typing Colors")
         # split layout

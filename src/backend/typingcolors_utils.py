@@ -1,5 +1,6 @@
 import numpy as np
 from PIL import Image
+from random import choices
 
 from backend.typingcolors import TypingColors
 
@@ -13,9 +14,6 @@ class Palette:
 
     def __init__(self, key: str):
         """Maps all characters to colours using the key"""
-        if not (3 < len(key) < 25):
-            raise ValueError("key should be between 4 and 24 characters")
-
         self.key = self._generate_key(key)
 
         for n, char in enumerate(PRINTABLE):  # generate pallete
@@ -32,6 +30,8 @@ class Palette:
 
     def _generate_key(self, key):
         """Generates a int key from the string"""
+        if len(key) == 0:
+            key = "".join(choices(PRINTABLE, k=16))
         return int.from_bytes(key.encode(), "little")
 
     def __getitem__(self, item):
