@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import filedialog as fd
+
 from gui.modules import *
 
 
@@ -40,7 +41,7 @@ class DecryptWin(Frame):
         self.root.info.set("0 characters   |   8px x 9px")
         self.canvas.pack(side="left", fill="both", anchor="w")
         self.root.text.pack(side="right", expand=True, fill="both", anchor="ne")
-        self.root.mainframe.grid(row=0, column=0, columnspan=2, sticky='nsew')
+        self.root.mainframe.grid(row=0, column=0, columnspan=2, sticky="nsew")
         Label(self.root, textvariable=self.root.key, bg=DARK_GRAY, fg="white").grid(
             row=1, column=0, sticky="w"
         )
@@ -53,7 +54,11 @@ class DecryptWin(Frame):
         """Updates the canvas to fill the screen"""
         sf = max(1, (self.bbox()[3] - 26) / self.object.ar_height)
         img = self.object.img_scaled(int(sf))
-        self.canvas.configure(image=img, width=self.object.ar_width*sf, height=self.object.ar_height*sf)
+        self.canvas.configure(
+            image=img,
+            width=self.object.ar_width * sf,
+            height=self.object.ar_height * sf,
+        )
         self.canvas.image = img
 
     def open(self):

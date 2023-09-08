@@ -1,16 +1,17 @@
 from pathlib import Path
 from random import choices
 from tkinter import *
-# from .modules import *
-from . import modules
 from tkinter import filedialog as fd
 
-from backend.typingcolors import TypingColors
 from backend import utils
+from backend.typingcolors import TypingColors
 from gui.modules import *
 from gui.win_decrypt import DecryptWin
 from gui.win_steganography import SteganographyWin
 from gui.win_typingcolors import TypingColorsWin
+
+# from .modules import *
+from . import modules
 
 WIN_W, WIN_H = (800, 600)
 POP_W, POP_H = (400, 300)
@@ -24,13 +25,6 @@ class GUI(Tk):
         """Initializes variables and window"""
         # Creates the window
         super().__init__()
-
-    def callback(self, callback: callable, destroy: list[Widget] = None, *args):
-        """Callback a function while destroying existing widgets"""
-        # Destroy the previous image labels for a fresh home screen application.
-        for i in destroy:
-            i.destroy()
-        callback(*args)
 
     # function to create the place to write text to create image
 
@@ -55,8 +49,7 @@ class GUI(Tk):
                 lambda: callback(self.create_main_window, [loading, gif]),
             )
 
-        # gif.load(IMGS / "title.gif", False, lambda: loading_animation(self))
-        gif.load(IMGS / "title.gif", False, lambda: callback(self.create_main_window, [gif]))
+        gif.load(IMGS / "title.gif", False, lambda: loading_animation(self))
         self.configure(background=DARK_GRAY)
         self.mainloop()
 
@@ -183,8 +176,11 @@ class GUI(Tk):
                 key = "".join(choices(PRINTABLE.replace("\t", ""), k=16))
             self.typingColors.set_key(key)
             callback(
-                lambda: TypingColorsWin(self, self.typingColors, key
-                                        ).pack(expand=True, fill='both'), [self.main])
+                lambda: TypingColorsWin(self, self.typingColors, key).pack(
+                    expand=True, fill="both"
+                ),
+                [self.main],
+            )
         else:
             self.steganographyWin = SteganographyWin()
 
@@ -203,5 +199,8 @@ class GUI(Tk):
             return
 
         callback(
-            lambda: DecryptWin(self, self.typingColors, decoded_text, key).pack(expand=True, fill='both'), [self.main]
+            lambda: DecryptWin(self, self.typingColors, decoded_text, key).pack(
+                expand=True, fill="both"
+            ),
+            [self.main],
         )

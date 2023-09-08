@@ -1,5 +1,9 @@
-from gui.main_gui import GUI
-
+# from gui.main_gui import GUI
 # run gui with canvas
-gui = GUI()
-gui.loading_screen()
+from gui.WindowManager import WindowManager
+
+# gui = GUI()
+# gui.loading_screen()
+
+
+guiMan = WindowManager()

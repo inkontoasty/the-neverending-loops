@@ -1,6 +1,5 @@
 from itertools import count, cycle
 from tkinter import *
-from tkinter import filedialog as fd
 
 from PIL import Image, ImageTk
 
@@ -170,42 +169,8 @@ def callback(callback: callable, destroy: list[Widget] = None, *args):
     callback(*args)
 
 
-def edit_key(root: Tk):
-    """Opens up an edit key window"""
-    root.popup = Toplevel(root, bg=DARK_GRAY)
-    root.popup.geometry("350x200")
-    root.key_method = Text(
-        root.popup, height=1, width=25, padx=2, pady=2, font=("Consolas", 12), bd=0
-    )
-    root.key_method.pack(pady=30)
-
-    root.error = Label(
-        root.popup,
-        text="",
-        font=("Consolas", 10, "bold"),
-        bg=DARK_GRAY,
-        fg=BRIGHT_RED,
-        pady=2,
-    )
-    root.error.pack()
-    submit = Button(
-        root.popup,
-        text="Edit Key",
-        font=("Consolas", 12, "bold"),
-        bg=GREEN,
-        fg=WHITE,
-        padx=5,
-        pady=3,
-        cursor="hand2",
-        bd=0,
-        command=lambda: _valid_key(root),
-    )
-    submit.pack()
-
-
-def _valid_key(root: Tk) -> bool:
+def valid_key(key: str) -> bool:
     """Returns a bool if key is valid/invalid"""
-    key = root.key_method.get("1.0", "end-1c")
     if not (4 <= len(key) <= 24 or len(key) == 0):
         return "Key must be between 4 and 24 characters long"
     elif " " in key:
@@ -213,31 +178,19 @@ def _valid_key(root: Tk) -> bool:
     return ""
 
 
-def switch_to_decrypt(win):
-    """Switches the window to the decrypt window"""
-    filename = fd.askopenfilename(title="Select Image", filetypes=[("PNG", "*.png")])
+# def decrypt(
+#     filename, key: str, root: Tk = None, key_method: Text = None, error: Label = None
+# ):
+#     """Opens the decryption page with the secret key"""
+#     from backend import utils
+#     from gui.win_decrypt import DecryptWin
 
-    edit_key(win, decrypt, filename)
-
-
-def decrypt(
-    filename, key: str, root: Tk = None, key_method: Text = None, error: Label = None
-):
-    """Opens the decryption page with the secret key"""
-    from backend import utils
-    from gui.win_decrypt import DecryptWin
-
-    # TODO: find out what method used to encrypt here
-    # decrypting typingcolors image
-    try:
-        typingColors, decoded_text = utils.decrypt(filename, key)
-    except KeyError:  # invalid decryption key
-        key_method.configure(bg=RED, fg=WHITE)
-        error.configure(text="Invalid secret key")
-        return
-    callback(
-        lambda: DecryptWin(root, typingColors, decoded_text, key).pack(
-            expand=True, fill="both"
-        ),
-        [],
-    )
+#     # TODO: find out what method used to encrypt here
+#     # decrypting typingcolors image
+#     try:
+#         typingColors, decoded_text = utils.decrypt(filename, key)
+#     except KeyError:  # invalid decryption key
+#         decoded_text = "Invalid secret key.\nPlease check the key."
+#         key_method.configure(bg=RED, fg=WHITE)
+#         error.configure(text="Invalid secret key")
+#         return
