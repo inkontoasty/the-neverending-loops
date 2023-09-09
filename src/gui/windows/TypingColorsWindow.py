@@ -11,9 +11,8 @@ class TypingColorsWindow(Window):
 
     def __init__(self, root: Tk):
         self.root = root
-        print(type(root), type(self))
         self.main = Frame(self.root, bg=DARK_GRAY)
-        super().initialize(root)
+        super().initialize()
         pass
 
     def initialize(self):

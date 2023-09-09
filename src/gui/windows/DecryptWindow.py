@@ -8,7 +8,6 @@ from gui.windows.Window import Window
 # from tkinter import ttk
 
 
-
 class DecryptWindow(Window):
     """Window for the Decrypt Game"""
 
@@ -16,7 +15,8 @@ class DecryptWindow(Window):
         """Initialize the window"""
         self.root = root
         self.main = Frame(self.root, bg=DARK_GRAY)
-        super().initialize(root)
+        super().__init__(self.root)
+        super().initialize()
 
     def initialize(self):
         """Creates the window and all of its widgets"""
@@ -67,7 +67,7 @@ class DecryptWindow(Window):
         self.root.title(f"{filename.split('/')[-1]} - Decrypt")
         try:
             encryptor, decoded_text = utils.decrypt(
-                filename, super(Window, self).key
+                filename, sef.key
             )  # KEY KAHA SE LE RAHE HAI????
             print(encryptor)
             img = encryptor.img

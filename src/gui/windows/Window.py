@@ -3,22 +3,34 @@ from abc import abstractmethod
 from random import choices
 from tkinter import *
 
+from backend.typingcolors import TypingColors
 from gui.WindowManager import WindowManager
 from gui.windows.modules import *
 
 
-class Window(WindowManager):
+class Window:
     """Blueprint for all windows in the Application"""
 
     def __init__(self, root: Tk):
         """Initializes variables and window"""
         self.root = root
+        self.key = "MUDITH"
         # Creates the window
         pass
 
-    def initialize(self, root: Tk) -> None:
+    @property
+    def key(self):
+        """Getter for the Key"""
+        return self._key
+
+    @key.setter
+    def key(self, k):
+        """Setter for the Key"""
+        # modules.edit_key()
+        self._key = k
+
+    def initialize(self) -> None:
         """Performs Initialization Action when the window is created"""
-        self.root = root
         self.menu_bar()
 
     def status_bar(self) -> None:
@@ -110,7 +122,7 @@ class Window(WindowManager):
 
     def destroy(self):
         """Performs Cleanup Action when the window exits"""
-        pass
+        self.main.destroy()
 
     # All Menu Bar Actions
     @abstractmethod
@@ -165,32 +177,45 @@ class Window(WindowManager):
             self.key_method.config(bg=RED, fg=WHITE)
             self.error.config(fg=RED, text=response)
         else:
-            # print(super(WindowManager, self).__class__.__name__)
-            # super(Window, self).key = key
             if len(key) == 0:
                 key = "".join(choices(PRINTABLE, k=16))
             self.key = key
 
-            # self.karambit()
-            super().karambit()
-            # print(super(Window, self).__name__)
-            # super(WindowManager, self)._key = key
             self.popup.destroy()
 
     def call_tc(self):
         """Switches to Typing Colors"""
         from gui.windows.TypingColorsWindow import TypingColorsWindow
 
-        super().switch(TypingColorsWindow)
+        switch(self, TypingColorsWindow)
 
     def call_steg(self):
         """Switches to Steganography"""
         from gui.windows.SteganographyWindow import SteganographyWindow
 
-        super().switch(SteganographyWindow)
+        switch(self, SteganographyWindow)
 
     def call_dc(self):
         """Switches to Decrypt"""
         from windows.DecryptWindow import DecryptWindow
 
-        super().switch(DecryptWindow)
+        switch(self, DecryptWindow)
+
+    def switch(self, new):
+        """Switches the window to a new window."""
+        # self = DecryptWindow
+
+        # self = WindowManager (og)
+        self.destroy()
+
+        self.win = new(self)
+        self.win.initialize()
+
+
+def switch(old: object, new: object):
+    """Makes new window"""
+    root = old.root
+    old.main.destroy()
+
+    temp = new(root)
+    temp.initialize()

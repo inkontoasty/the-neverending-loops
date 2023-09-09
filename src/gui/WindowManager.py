@@ -8,23 +8,23 @@ POP_W, POP_H = (400, 300)
 IMGS = Path("assets") / "imgs"
 
 
-class WindowManager(Tk):
+class WindowManager:
     """Manages the windows for encryption/decryption."""
 
     def __init__(self):
         """Initialize the current window."""
-        super().__init__()
-        self.key = "MUDIT"
+        from gui.windows.Window import Window
         from gui.windows.DecryptWindow import DecryptWindow
 
-        self.win = DecryptWindow(self)
+        self.root = Tk()
+        Window(self.root)
+        self.win = DecryptWindow(self.root)
         self.win.initialize()
 
         print(self.win)
 
         self.splash_screen()
-        self.mode, self.key = self.intro_screen()  # enc/dec
-        self.mainloop()
+        self.root.mainloop()
         # self.switch(self.mode)
 
     def splash_screen(self):
@@ -52,30 +52,16 @@ class WindowManager(Tk):
         # self.configure(background=DARK_GRAY)
         # self.mainloop()
 
-    def intro_screen(self):
-        """Returns the mode and key for the encryption/decryption."""
-        return ("Decrypt", self.key)
-
     def switch(self, new):
         """Switches the window to a new window."""
         # self = DecryptWindow
 
         # self = WindowManager (og)
-        self.destroy()
+        self.win.main.destroy()
+        # static win
 
         self.win = new(self)
         self.win.initialize()
-
-    @property
-    def key(self):
-        """Getter for the Key"""
-        return self._key
-
-    @key.setter
-    def key(self, k):
-        """Setter for the Key"""
-        # modules.edit_key()
-        self._key = k
 
 
 # key = 10; -> self.key = set_key(10)
