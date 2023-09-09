@@ -21,8 +21,6 @@ class WindowManager:
         self.win = DecryptWindow(self.root)
         self.win.initialize()
 
-        print(self.win)
-
         self.splash_screen()
         self.root.mainloop()
         # self.switch(self.mode)

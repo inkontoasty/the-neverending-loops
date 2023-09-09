@@ -67,7 +67,7 @@ class DecryptWindow(Window):
         self.root.title(f"{filename.split('/')[-1]} - Decrypt")
         try:
             encryptor, decoded_text = utils.decrypt(
-                filename, sef.key
+                filename, self.key
             )  # KEY KAHA SE LE RAHE HAI????
             print(encryptor)
             img = encryptor.img

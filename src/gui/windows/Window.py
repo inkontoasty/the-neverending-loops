@@ -26,8 +26,8 @@ class Window:
     @key.setter
     def key(self, k):
         """Setter for the Key"""
-        # modules.edit_key()
         self._key = k
+        self.on_key_change(k)
 
     def initialize(self) -> None:
         """Performs Initialization Action when the window is created"""
@@ -45,6 +45,9 @@ class Window:
         Label(self.root, textvariable=self.info, bg=DARK_GRAY, fg="white").grid(
             row=1, column=1, sticky="e"
         )
+
+    def on_key_change(self, key: str) -> None:
+        pass
 
     def menu_bar(self) -> None:
         """Packs the menubar for the application"""
@@ -180,7 +183,6 @@ class Window:
             if len(key) == 0:
                 key = "".join(choices(PRINTABLE, k=16))
             self.key = key
-
             self.popup.destroy()
 
     def call_tc(self):
