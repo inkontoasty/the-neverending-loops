@@ -36,7 +36,7 @@ class GUI(Tk):
 
         # GET THE CURRENT SCREEN SIZE AND SET MIN SIZE accordingly
         self.sw, self.sh = self.winfo_screenwidth(), self.winfo_screenheight()
-        self.minsize(width=int(self.sw*.45), height=int(self.sh*.45))
+        self.minsize(width=int(self.sw * 0.45), height=int(self.sh * 0.45))
 
         self.geometry(f"{WIN_W}x{WIN_H}")
         center(self, WIN_W, WIN_H)
@@ -187,21 +187,27 @@ class GUI(Tk):
 
     def decrypt(self, key: str = None):
         """Opens the decryption page with the secret key"""
-        filename = fd.askopenfilename(title="Select Image", filetypes=[("PNG", "*.png")])
+        filename = fd.askopenfilename(
+            title="Select Image", filetypes=[("PNG", "*.png")]
+        )
         if not filename:
             return
-        try:
-            object, decoded_text = utils.decrypt(filename, key)
-        except Exception:  # invalid decryption key
-            self.key_method.configure(bg=RED, fg=WHITE)
-            self.error.configure(text="Invalid secret key")
-            return
 
-        def create_win():
-            self.currentwin = DecryptWin(self, object, decoded_text)
-            self.currentwin.pack(expand=True, fill="both")
+        # object, decoded_text, decoded_successfully = utils.try_decrypt(filename, key)
+        # if not decoded_successfully:
+        #     # invalid decryption key
+        #     decoded_text = "FAILED TO DECODE WITH KEY !\nTRY ANOTHER KEY !"
+        #     # Update Menu UI to show error IF we are on the main menu
+        #     if self.currentwin is None:
+        #         self.key_method.configure(bg=RED, fg=WHITE)
+        #         self.error.configure(text="Invalid secret key")
 
-        self.callback(create_win)
+        def create_decrypt_win():
+            self.currentwin = DecryptWin(self, filename)
+            # self.currentwin.pack(expand=True, fill="both")
+
+        # TODO: why not self.destroy() + create_decrypt_win() ?
+        self.callback(create_decrypt_win)
 
     def switch_typingcolors(self):
         """Switches to typing colors mode"""
@@ -216,7 +222,9 @@ class GUI(Tk):
 
     def switch_steganography(self):
         """Switches to encrypt steganography"""
-        filename = fd.askopenfilename(title="Select Image", filetypes=[("PNG", "*.png")])
+        filename = fd.askopenfilename(
+            title="Select Image", filetypes=[("PNG", "*.png")]
+        )
         if not filename:
             return
 
@@ -228,4 +236,5 @@ class GUI(Tk):
 
     def switch_decrypt(self):
         """Switches to decrypt mode"""
-        key_popup(self, after_exec=lambda: self.decrypt(self.key))
+        # key_popup(self, after_exec=lambda: self.decrypt(self.key))
+        self.decrypt(self.key)
