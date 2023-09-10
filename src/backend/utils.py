@@ -37,16 +37,6 @@ class Palette:
         return self.palette[item]  # raise keyerror if invalid decryption key
 
 
-def get_img_mode(file_path):
-    img = open(file_path)
-    lastPixel = img.load()[-1, -1]
-
-    if lastPixel[-2] & 7 == 1:
-        return (img, "Steganography")
-    else:
-        return (img, "Typing Colors")
-
-
 def try_decrypt(file_path, key):
     """Calls the appropriate decryptor and returns the encryptor class and secret message"""
     img = open(file_path)
@@ -62,7 +52,7 @@ def try_decrypt(file_path, key):
     success = True
     try:
         decoded_txt = object.decode()
-    except Exception as e:
+    except Exception:
         decoded_txt = "COULD NOT DECODE TEXT !\nINVALID KEY !"
         success = False
 

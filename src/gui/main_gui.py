@@ -33,7 +33,7 @@ class GUI(Tk):
     def loading_screen(self):
         """The starting page for the application"""
         self.title("Pixel Studios")
-
+        self.currentwin = None
         # GET THE CURRENT SCREEN SIZE AND SET MIN SIZE accordingly
         self.sw, self.sh = self.winfo_screenwidth(), self.winfo_screenheight()
         self.minsize(width=int(self.sw * 0.45), height=int(self.sh * 0.45))
@@ -192,21 +192,21 @@ class GUI(Tk):
         )
         if not filename:
             return
-
-        # object, decoded_text, decoded_successfully = utils.try_decrypt(filename, key)
-        # if not decoded_successfully:
-        #     # invalid decryption key
-        #     decoded_text = "FAILED TO DECODE WITH KEY !\nTRY ANOTHER KEY !"
-        #     # Update Menu UI to show error IF we are on the main menu
-        #     if self.currentwin is None:
-        #         self.key_method.configure(bg=RED, fg=WHITE)
-        #         self.error.configure(text="Invalid secret key")
+        object, decoded_text, decoded_successfully = utils.try_decrypt(filename, key)
+        if not decoded_successfully:
+            # invalid decryption key
+            decoded_text = "FAILED TO DECODE WITH KEY !\nTRY ANOTHER KEY !"
+            # Update Menu UI to show error IF we are on the main menu
+            if self.currentwin is None:
+                self.key_method.configure(bg=RED, fg=WHITE)
+                self.error.configure(text="Invalid secret key")
 
         def create_decrypt_win():
-            self.currentwin = DecryptWin(self, filename)
-            # self.currentwin.pack(expand=True, fill="both")
+            self.currentwin = DecryptWin(
+                self, object, decoded_text, decoded_successfully
+            )
+            self.currentwin.pack(expand=True, fill="both")
 
-        # TODO: why not self.destroy() + create_decrypt_win() ?
         self.callback(create_decrypt_win)
 
     def switch_typingcolors(self):

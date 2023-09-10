@@ -5,35 +5,25 @@ from PIL import ImageTk
 from PIL.Image import BOX, fromarray
 
 from backend.typingcolors import TypingColors
-from backend.utils import get_img_mode, try_decrypt
 from gui.modules import *
 
 
 class DecryptWin(Frame):
     """Window for decryption"""
 
-    def __init__(self, root, filename):
+    def __init__(self, root, object, decoded_text, success):
         """Creates the layout"""
         # identify mode and set image
-
-        decoded_text = ""
-        self.filename = filename
         self.root = root
-        img, mode = get_img_mode(filename)
-
-        if mode == "Typing Colors":
+        if isinstance(object, TypingColors):
             self.mode = "Typing Colors"
-            self.image = (
-                img.convert("RGBA")
-                if img
-                else Image.new("RGBA", self.size, (0, 0, 0, 0))
-            )
-            self.ar_width, self.ar_height = (8, 9)
+            self.image = object.canvas
+            self.ar_width, self.ar_height = object.ar_width, object.ar_height
         else:
             self.mode = "Steganography"
-            self.image = img
-            # self.image = fromarray(object.input_image)
-
+            self.image = fromarray(object.input_image)
+        self.object = object
+        self.success = success
         # create window
         super().__init__(root, bg=DARK_GRAY)
         dynamic_menu_bar(root, self)
@@ -54,10 +44,10 @@ class DecryptWin(Frame):
             fg="white",
             font=("Consolas", 14),
         )
-        # self.text.insert("end", decoded_text)
-        # self.text.configure(state="disabled")
+        self.text.insert("end", decoded_text)
+        if not self.success:
+            self.text.configure(state="disabled", bg="#c1193a", fg=WHITE)
 
-        # TODO: ADD ERROR INFO HERE
         self.canvas = Label(
             self.mainframe, image=ImageTk.PhotoImage(self.image), bg=DARK_GRAY
         )
@@ -80,25 +70,6 @@ class DecryptWin(Frame):
             row=1, column=1, sticky="e"
         )
         root.bind("<Configure>", self.updatecanvas)
-        # PACK
-        self.pack(expand=True, fill="both")
-
-        # TODO: START DECODING IMG HERE....
-        # DECODING CODE STARTS
-        object, decoded_text, decoded_successfully = try_decrypt(filename, root.key)
-        print(f"{decoded_text=}")
-        self.object = object
-        self.success = decoded_successfully
-
-        if not decoded_successfully:
-            decoded_text = "FAILED TO DECODE WITH KEY !\nTRY ANOTHER KEY !"
-            self.text.insert("end", decoded_text)
-            self.text.config(state="disabled", bg=RED, fg="#000")
-        else:
-            self.text.insert("end", decoded_text)
-            self.text.configure(state="disabled")
-
-        self.ar_width, self.ar_height = object.ar_width, object.ar_height = (8, 9)
 
     def copy_key_to_clipboard(self, _event):
         """Copies key used to encrypt images to the clipboard"""
@@ -136,24 +107,6 @@ class DecryptWin(Frame):
         if filename:
             open(filename, "w").write(self.text.get(1.0, "end"))
 
-    def idk(self, key):
-        object, decoded_text, decoded_successfully = try_decrypt(self.filename, key)
-        print(f"{decoded_text=}")
-        self.object = object
-        self.success = decoded_successfully
-
-        self.text.config(state="enabled")
-        if not decoded_successfully:
-            decoded_text = "FAILED TO DECODE WITH KEY !\nTRY ANOTHER KEY !"
-            self.text.insert("end", decoded_text)
-            self.text.config(state="disabled", bg=RED, fg="#000")
-        else:
-            self.text.insert("end", decoded_text)
-            self.text.configure(state="disabled")
-
-        self.ar_width, self.ar_height = object.ar_width, object.ar_height = (8, 9)
-
     def edit_key(self):
         """Edits decryption key"""
-        key_popup(self.root, lambda: self.idk(self.root.key))
-        # TODO: RECODE here...
+        key_popup(self.root, lambda: self.root.decrypt(self.root.key))
